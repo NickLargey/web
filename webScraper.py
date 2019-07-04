@@ -56,6 +56,7 @@ class Scraper:
 		self.aphoadion = self.get_dates_and_shows()
 		self.eventbrite = self.get_eventbrite()
 		self.songkick = self.get_songkick() 
+		
 		if self.aphoadion:
 			print(">>>>>>>>>>>>>>APOHADION<<<<<<<<<<<<<<< \n", self.aphoadion)
 		elif self.eventbrite:
@@ -70,8 +71,7 @@ apoha = Scraper('https://www.theapohadiontheater.com/')
 sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
 genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
 
-
-#testing purposes 
+ 
 apoha.report()
 genos.report()
 sun_tiki.report()
