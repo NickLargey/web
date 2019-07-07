@@ -1,17 +1,16 @@
 import requests as re
 from lxml import html
-from datetime import datetime
+from datetime import datetime as dt 
 
 class Scraper:
 	"""A web-scraper that looks up what show's are going on in 
-		portland, me and reports them back to user (method of report TBD)."""
+		portland, me and stores it in a PostgreSQL database for fun."""
 
 	def __init__(self,url):
 		# declare url variable to scrape for info
 		self.url = url
 		# set up website info
 		self.call = re.get(url)
-		# self.text = self.call.text /// test to make sure call worked (debug)
 
 	def get_dates_and_shows(self):
 		# use lxml library to get dates from html class tags
@@ -19,12 +18,17 @@ class Scraper:
 		# create a list of dates using xpath
 		self.month = self.tree.xpath('//span[@class="month"]/text()')
 		self.day = self.tree.xpath('//span[@class="date"]/text()')
+		self.year = str(dt.now().year)
 		self.events = self.tree.xpath('//div[@class="event_title"]/text()')
-		self.year = str(datetime.now().year) 
+
 		# create single list of date strings from tuples of two html tags
 		self.dates = [s + self.year for s in list(map(''.join,(zip(self.month,self.day))))]
+		# self.datetime_shows = [dt.strptime(date, '%b %d %Y').date() for date in self.dates]  
+		
 		self.apoha_shows = list(map(' '.join,(zip(self.dates, self.events))))
+		
 		#!!! add feature to roll year over between dec/jan
+		
 		return self.apoha_shows
 
 
@@ -67,11 +71,11 @@ class Scraper:
 
 
 
-apoha = Scraper('https://www.theapohadiontheater.com/')
-sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
-genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
+# apoha = Scraper('https://www.theapohadiontheater.com/')
+# sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
+# genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
 
  
-apoha.report()
-genos.report()
-sun_tiki.report()
+# apoha.report()
+# genos.report()
+# sun_tiki.report()

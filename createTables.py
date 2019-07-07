@@ -1,18 +1,16 @@
-#!/usr/bin/python
- 
 import psycopg2
 from config import config
  
  
 def create_tables():
     """ create tables in the PostgreSQL database"""
-    commands = (
+    command = (
         """
         CREATE TABLE portland_shows (
-            date = datetime PRIMARY KEY,
-            Apohadion VARCHAR(50),
-            genos VARCHAR(50),
-            sun_tiki VARCHAR(500))
+            -- date_of_show DATE PRIMARY KEY,
+            Apohadion VARCHAR(5000),
+            genos VARCHAR(5000),
+            sun_tiki VARCHAR(5000))
             """
         )
     conn = None
@@ -23,8 +21,8 @@ def create_tables():
         conn = psycopg2.connect(**params)
         cur = conn.cursor()
         # create table one by one
-        for command in commands:
-            cur.execute(command)
+        # for command in commands:
+        cur.execute(command)
         # close communication with the PostgreSQL database server
         cur.close()
         # commit the changes
@@ -33,6 +31,7 @@ def create_tables():
         print(error)
     finally:
         if conn is not None:
+            print("Table set")
             conn.close()
  
  
