@@ -26,25 +26,35 @@ class Scraper:
 		# self.datetime_shows = [dt.strptime(date, '%b %d %Y').date() for date in self.dates]  
 		
 		self.apoha_shows = list(map(' '.join,(zip(self.dates, self.events))))
+		self.aph_dict = dict(zip(self.dates, self.events))
 		
 		#!!! add feature to roll year over between dec/jan
 		
-		return self.apoha_shows
+		return self.aph_dict
 
 
 	def get_eventbrite(self):
 		# use lxml library to get dates from html class tags
 		self.ftree = html.fromstring(self.call.content)
+		self.year = str(dt.now().year)
 		# create a list of dates using xpath
-		self.fdates = self.ftree.xpath('//article[@id="live_events"]//time[@class="list-card__date"]/text()')
-		self.fevents = self.ftree.xpath('//article[@id="live_events"]//div[@class="list-card__title"]/text()')
+		self.date = self.ftree.xpath('//article[@id="live_events"]//time[@class="list-card__date"]/text()')
+		self.event = self.ftree.xpath('//article[@id="live_events"]//div[@class="list-card__title"]/text()')
 		
 		# Ugly as sin, but only way I could figure out how to clean up eventbrite data.
-		self.shows = list(map(''.join,(zip(self.fdates, self.fevents))))
-		self.fshows = [i.replace('\n','').strip().split() for i in self.shows]
-		self.eventbrite_shows = list(map(' '.join, self.fshows)) 
+		self.dates = list(map(''.join,self.date))
+		self.events = list(map(''.join,self.event))
 		
-		return self.eventbrite_shows
+		self.fdates = [i.replace('\n','').strip().split() for i in self.dates]
+		self.fevents = [i.replace('\n','').strip().split() for i in self.events]
+
+		self.eDates = list(map(' '.join, self.fdates))
+		self.eEvents = list(map(' '.join, self.fevents))
+		# print(self.eDates, self.eEvents)
+		
+		self.evnt_dict = dict(zip(self.eDates, self.eEvents))
+		
+		return self.evnt_dict
 
 	def get_songkick(self):
 		# use lxml library to get dates from html class tags
@@ -52,9 +62,10 @@ class Scraper:
 		# create a list of dates using xpath
 		self.sdates = self.stree.xpath('//li[@class="with-date"]/strong/time/text()')
 		self.sevents = self.stree.xpath('//p[@class="artists summary"]/a/span/strong/text()')
-		self.songkick_shows = list(map(' '.join,(zip(self.sdates, self.sevents))))
-		
-		return self.songkick_shows
+		# self.songkick_shows = list(map(' '.join,(zip(self.sdates, self.sevents))))
+		self.sng_dict = dict(zip(self.sdates, self.sevents))
+
+		return self.sng_dict
 	
 	def report(self):
 		self.aphoadion = self.get_dates_and_shows()
@@ -73,9 +84,9 @@ class Scraper:
 
 # apoha = Scraper('https://www.theapohadiontheater.com/')
 # sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
-# genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
+genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
 
  
 # apoha.report()
-# genos.report()
+genos.report()
 # sun_tiki.report()
