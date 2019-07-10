@@ -45,7 +45,7 @@ class Scraper:
 		self.dates = list(map(''.join,self.date))
 		self.events = list(map(''.join,self.event))
 		
-		self.fdates = [i.replace('\n','').strip().split() for i in self.dates]
+		self.fdates = [i.replace('\n','').strip().split() + self.year for i in self.dates]
 		self.fevents = [i.replace('\n','').strip().split() for i in self.events]
 
 		self.eDates = list(map(' '.join, self.fdates))
@@ -82,11 +82,11 @@ class Scraper:
 
 
 
-# apoha = Scraper('https://www.theapohadiontheater.com/')
-# sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
+apoha = Scraper('https://www.theapohadiontheater.com/')
+sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
 genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
 
  
-# apoha.report()
+apoha.report()
 genos.report()
-# sun_tiki.report()
+sun_tiki.report()
