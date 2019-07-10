@@ -1,6 +1,7 @@
 import requests as re
 from lxml import html
 from datetime import datetime as dt 
+from datetime import date
 
 class Scraper:
 	"""A web-scraper that looks up what show's are going on in 
@@ -23,10 +24,11 @@ class Scraper:
 
 		# create single list of date strings from tuples of two html tags
 		self.dates = [s + self.year for s in list(map(''.join,(zip(self.month,self.day))))]
-		# self.datetime_shows = [dt.strptime(date, '%b %d %Y').date() for date in self.dates]  
+		# self.date_list = [x.strftime("%b %d %Y") for x in self.dates] 
+		self.datetime_shows = [dt.strptime(date, '%b %d %Y').date() for date in self.dates]  
 		
-		self.apoha_shows = list(map(' '.join,(zip(self.dates, self.events))))
-		self.aph_dict = dict(zip(self.dates, self.events))
+		# self.apoha_shows = list(map(' '.join,(zip(self.date_list, self.events))))
+		self.aph_dict = dict(zip(self.datetime_shows, self.events))
 		
 		#!!! add feature to roll year over between dec/jan
 		
@@ -45,14 +47,15 @@ class Scraper:
 		self.dates = list(map(''.join,self.date))
 		self.events = list(map(''.join,self.event))
 		
-		self.fdates = [i.replace('\n','').strip().split() + self.year for i in self.dates]
+
+		self.fdates = [i.replace('\n','').strip().split() for i in self.dates]
 		self.fevents = [i.replace('\n','').strip().split() for i in self.events]
 
 		self.eDates = list(map(' '.join, self.fdates))
 		self.eEvents = list(map(' '.join, self.fevents))
-		# print(self.eDates, self.eEvents)
-		
-		self.evnt_dict = dict(zip(self.eDates, self.eEvents))
+		self.datetime_shows = [dt.strptime((date + self.year), '%a, %b %d %I:%M %p%Y').date() for date in self.eDates]
+
+		self.evnt_dict = dict(zip(self.datetime_shows, self.eEvents))
 		
 		return self.evnt_dict
 
@@ -60,10 +63,11 @@ class Scraper:
 		# use lxml library to get dates from html class tags
 		self.stree = html.fromstring(self.call.content)
 		# create a list of dates using xpath
-		self.sdates = self.stree.xpath('//li[@class="with-date"]/strong/time/text()')
-		self.sevents = self.stree.xpath('//p[@class="artists summary"]/a/span/strong/text()')
+		self.dates = self.stree.xpath('//li[@class="with-date"]/strong/time/text()')
+		self.events = self.stree.xpath('//p[@class="artists summary"]/a/span/strong/text()')
 		# self.songkick_shows = list(map(' '.join,(zip(self.sdates, self.sevents))))
-		self.sng_dict = dict(zip(self.sdates, self.sevents))
+		self.sdates = [dt.strptime(date, '%A %d %B %Y').date() for date in self.dates]
+		self.sng_dict = dict(zip(self.sdates, self.events))
 
 		return self.sng_dict
 	
