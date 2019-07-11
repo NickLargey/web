@@ -12,22 +12,33 @@ genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194').get_
 
 base = date.today()
 date_list = [base + datetime.timedelta(days=x) for x in range(0, 100)]
-fdate_list = [x.strftime("%b %d %Y") for x in date_list] 
+# fdate_list = [x.strftime("%b %d %Y").date() for x in date_list] 
 
-print(fdate_list)
 params = config()
 # connect to the PostgreSQL server
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
-sql_time = "INSERT INTO portland_shows(date_of_show) VALUES (%s)"
-for obj in zip(fdate_list):
+sql_time = "INSERT INTO portland_shows(date_of_show) VALUES (%s) ON CONFLICT (date_of_show) DO NOTHING;"
+for obj in zip(date_list):
 	cur.execute(cur.mogrify(sql_time, obj))
 	
-sql = "INSERT INTO portland_shows (apohadion, genos, sun_tiki) VALUES (%s, %s, %s);"
-for obj in zip(apoha, genos, sun_tiki):
-    cur.execute(cur.mogrify(sql, obj))
+
+for k,v in apoha.items():
+    cur.execute('''UPDATE portland_shows 
+                         SET apohadion = (%s) 
+                       WHERE date_of_show = (%s);''',(v,k))
+
+for k,v in sun_tiki.items():
+    cur.execute('''UPDATE portland_shows 
+                         SET sun_tiki = (%s) 
+                       WHERE date_of_show = (%s);''',(v,k))
+
+for k,v in genos.items():
+    cur.execute('''UPDATE portland_shows 
+                         SET genos = (%s) 
+                       WHERE date_of_show = (%s);''',(v,k))
 conn.commit()
 
-cur.close()
+cur.close
 conn.close()

@@ -86,11 +86,11 @@ class Scraper:
 
 
 
-apoha = Scraper('https://www.theapohadiontheater.com/')
-sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
-genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
+# apoha = Scraper('https://www.theapohadiontheater.com/')
+# sun_tiki = Scraper('https://www.songkick.com/venues/3951109-sun-tiki-studios')
+# genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194')
 
  
-apoha.report()
-genos.report()
-sun_tiki.report()
+# apoha.report()
+# genos.report()
+# sun_tiki.report()
