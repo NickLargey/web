@@ -12,18 +12,18 @@ genos = Scraper('https://www.eventbrite.com/o/genos-rock-club-15681751194').get_
 
 base = date.today()
 date_list = [base + datetime.timedelta(days=x) for x in range(0, 100)]
-# fdate_list = [x.strftime("%b %d %Y").date() for x in date_list] 
 
 params = config()
 # connect to the PostgreSQL server
 conn = psycopg2.connect(**params)
 cur = conn.cursor()
 
+# create the dates column as the primary key
 sql_time = "INSERT INTO portland_shows(date_of_show) VALUES (%s) ON CONFLICT (date_of_show) DO NOTHING;"
 for obj in zip(date_list):
 	cur.execute(cur.mogrify(sql_time, obj))
 	
-
+# loop through returned dicts from Scraper and match key:value pairs in postgres
 for k,v in apoha.items():
     cur.execute('''UPDATE portland_shows 
                          SET apohadion = (%s) 
@@ -38,6 +38,7 @@ for k,v in genos.items():
     cur.execute('''UPDATE portland_shows 
                          SET genos = (%s) 
                        WHERE date_of_show = (%s);''',(v,k))
+
 conn.commit()
 
 cur.close
