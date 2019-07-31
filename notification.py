@@ -1,14 +1,14 @@
+"""Access postgres DB to get next few days of shows to text to myself"""
+from createData import create_data
 import psycopg2
 from psycopg2 import sql
-
 from twilio.rest import Client
 from twilioInit import twilio_init
-
-import datetime
-from datetime import date
 from config import config
 
-  	
+
+create_data()
+
 params = config()
 # connect to the PostgreSQL server
 conn = psycopg2.connect(**params)
@@ -16,8 +16,8 @@ cur = conn.cursor()
 
 # load the table of shows
 cur.execute(
-    sql.SQL("SELECT * FROM {}")
-        .format(sql.Identifier('portland_shows')))
+	sql.SQL("SELECT * FROM {} ORDER BY {} ASC")
+		.format(sql.Identifier('portland_shows'),sql.Identifier('date_of_show')))
 
 # return the first 3 rows as a variable 
 this_week = cur.fetchmany(3)
